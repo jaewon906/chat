@@ -8,10 +8,8 @@
     </div>
     <div class="chat_input__wrapper">
       <ur-input @enter="send"/>
+      <ur-button @click="send">send</ur-button>
     </div>
-<!--    <div class="button__wrapper">-->
-<!--      <ur-button @enter="send"/>-->
-<!--    </div>-->
   </div>
 </template>
 
@@ -113,6 +111,9 @@ import UrButton from "@/components/common/UrButton.vue";
   }
 
   .chat_input__wrapper{
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
     width:80%
   }
   .button__wrapper{

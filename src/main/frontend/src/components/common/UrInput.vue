@@ -1,8 +1,11 @@
 <template>
   <div class="ur-input__wrapper">
-    <input class="ur-input" v-model="data.content" @keydown="onKeyDownEnter"/>
+    <input class="ur-input"
+           v-model="data.content"
+           @keydown="onKeyDownEnter"
+           :placeholder="placeholder"
+    />
     <slot name="button">
-      <ur-button @click="onClickBtn">전송</ur-button>
     </slot>
   </div>
 </template>
@@ -17,6 +20,7 @@
     content: '',
     timestamp: ''
   })
+  defineProps(['placeholder'])
   const emit = defineEmits(['enter'])
   const onKeyDownEnter = (e) => {
     if (data.value.content !== '' && data.value.content !== undefined && data.value.content !== null) {
@@ -36,16 +40,18 @@
 <style scoped lang="scss">
   .ur-input{
     height:100%;
-    width: calc(100% - 100px);
+    width: 100%;
   }
   .ur-input__wrapper{
-    margin-top: 20px;
     width: 100%;
-    height: 40px;
+    height: 50px;
     display: flex;
     align-items: center;
   }
   input{
+    height:100%;
+    border-radius: 5px;
+    border: 1px solid gray;
   }
   input:focus{
     background-color: #e1ebff;
