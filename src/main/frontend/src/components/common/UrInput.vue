@@ -4,6 +4,7 @@
            v-model="data.content"
            @keydown="onKeyDownEnter"
            :placeholder="placeholder"
+           :type="type"
     />
     <slot name="button">
     </slot>
@@ -20,7 +21,7 @@
     content: '',
     timestamp: ''
   })
-  defineProps(['placeholder'])
+  defineProps(['placeholder', 'type'])
   const emit = defineEmits(['enter'])
   const onKeyDownEnter = (e) => {
     if (data.value.content !== '' && data.value.content !== undefined && data.value.content !== null) {

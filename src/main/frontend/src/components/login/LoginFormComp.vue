@@ -5,8 +5,8 @@
         <span class="description">Please fill your ID, PW</span>
       </div>
       <div class="login_form__content">
-        <ur-input placeholder="ID"></ur-input><br/>
-        <ur-input placeholder="PW"></ur-input>
+        <ur-input placeholder="ID" type="text"></ur-input><br/>
+        <ur-input placeholder="PW" type="password"></ur-input>
       </div>
       <div class="right-bottom-action">
         <slot name="right-bottom-action"/>
@@ -14,11 +14,11 @@
       <div class="forgot_your__password">
         <div>
           <span>forgot your ID?</span>
-          <span style="color: rgb(21,112,239)">find your ID</span>
+          <span style="color: rgb(21,112,239)" @click="forwardfindPage('ID')">find your ID</span>
         </div>
         <div>
           <span>forgot your password?</span>
-          <span style="color: rgb(21,112,239)">find your password</span>
+          <span style="color: rgb(21,112,239)" @click="forwardfindPage('PW')">find your password</span>
         </div>
 
       </div>
@@ -29,6 +29,12 @@
 <script setup>
 
 import UrInput from "@/components/common/UrInput.vue";
+import {useRouter} from "vue-router";
+
+function forwardfindPage(pageType){
+ console.log(this.$router.push())
+ console.log(this.$route.push())
+}
 
 </script>
 

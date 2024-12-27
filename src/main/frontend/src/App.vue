@@ -8,8 +8,10 @@
 </script>
 
 <style>
-.main_body{
+body{
   margin:0;padding:0;
+}
+.main_body{
   width:100%;
   height:100%;
 }
