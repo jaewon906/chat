@@ -1,5 +1,5 @@
 <template>
-  <button :class="buttonClass" @click="click">
+  <button :class="buttonClass" :disabled="disabled" @click="click">
     <slot></slot>
   </button>
 </template>
@@ -29,9 +29,14 @@
       type: Boolean,
       default: false
     },
+    disabled:{
+      type: Boolean,
+      default: false
+    }
   })
   function click(){
-   emit('click')
+    if(!props.disabled)
+      emit('click')
  }
 
   const buttonClass = computed(()=>{
@@ -40,7 +45,8 @@
       'ur-button-sm': props.small,
       'ur-button-medium': props.medium,
       'ur-button-large': props.large,
-      'ur-button-xlarge': props.xlarge
+      'ur-button-xlarge': props.xlarge,
+      'ur-button-disabled': props.disabled
     }
   })
 
@@ -71,6 +77,10 @@
 }
 .ur-button-xlarge{
   width:300px;
+}
+.ur-button-disabled{
+  background-color: #bdcdec;
+  cursor:default;
 }
 .ur-button:hover{
   background-color: #bdcdec

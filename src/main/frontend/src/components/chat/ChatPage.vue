@@ -7,8 +7,8 @@
       />
     </div>
     <div class="chat_input__wrapper">
-      <ur-input @enter="send"/>
-      <ur-button @click="send">send</ur-button>
+      <ur-input v-model="chatData.content" @enter="send"/>
+      <ur-button @click="send" :disabled="isContentNull">send</ur-button>
     </div>
   </div>
 </template>
@@ -17,7 +17,7 @@
 /* eslint-disable */
   import UrInput from "@/components/common/UrInput.vue";
 import ChatBubble from "@/components/chat/ChatBubble.vue";
-import {onMounted, ref, nextTick} from "vue";
+import {onMounted, ref, nextTick, watch} from "vue";
 import SockJS from "sockjs-client"
 import {Stomp} from '@stomp/stompjs'
 import UrButton from "@/components/common/UrButton.vue";
@@ -48,6 +48,12 @@ import UrButton from "@/components/common/UrButton.vue";
 
   /* reactive Object*/
   const messageQueue =ref([])
+  const chatData =ref({
+    sender: '',
+    content: '',
+    timestamp: '',
+  })
+  const isContentNull =ref(true)
   const UUID = new Date() - (-0) // #TODO 임시
   /* end reactive Object*/
 
@@ -65,17 +71,27 @@ import UrButton from "@/components/common/UrButton.vue";
       })
     })
   }
-  function send(obj){
-    obj.value.sender = UUID
-    obj.value.timestamp = convertToUTC9()
-    data.socket.send(data.url.PUB + data.url.send, {}, JSON.stringify(obj.value))
+
+  function send() {
+    chatData.value.sender = UUID
+    chatData.value.timestamp = convertToUTC9()
+    data.socket.send(data.url.PUB + data.url.send, {}, JSON.stringify(chatData.value))
+    chatData.value.content = ''
   }
+
   function convertToUTC9(){
     const date = new Date()
     date.setHours(date.getHours() + 9)
     return date;
   }
 
+  watch(()=>chatData.value.content,()=>{
+   if(chatData.value.content !== ''
+       && chatData.value.content !== null
+       && chatData.value.content !== undefined)
+   {isContentNull.value = false}
+   else isContentNull.value = true
+  })
 </script>
 
 

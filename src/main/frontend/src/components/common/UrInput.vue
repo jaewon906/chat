@@ -1,8 +1,9 @@
 <template>
   <div class="ur-input__wrapper">
     <input class="ur-input"
-           v-model="data.content"
+           v-bind:value="modelValue"
            @keydown="onKeyDownEnter"
+           @input="onInput"
            :placeholder="placeholder"
            :type="type"
     />
@@ -16,27 +17,20 @@
   import {ref} from "vue";
   import UrButton from "@/components/common/UrButton.vue";
 
-  const data=ref({
-    sender: '',
-    content: '',
-    timestamp: ''
-  })
-  defineProps(['placeholder', 'type'])
-  const emit = defineEmits(['enter'])
+  const props = defineProps(['placeholder', 'type', 'modelValue'])
+  const emit = defineEmits(['enter', 'update:modelValue'])
   const onKeyDownEnter = (e) => {
-    if (data.value.content !== '' && data.value.content !== undefined && data.value.content !== null) {
+    if (props.modelValue !== '' && props.modelValue !== undefined && props.modelValue !== null) {
       if (e.keyCode === 13) {
-        emit('enter', data)
-        data.value.content = ''
+        emit('enter')
       }
     }
   };
-  const onClickBtn = () => {
-    if (data.value.content !== '' && data.value.content !== undefined && data.value.content !== null) {
-      emit('enter', data)
-      data.value.content = ''
-    }
+
+  const onInput = (e) => {
+    emit('update:modelValue', e.target.value)
   };
+
 </script>
 <style scoped lang="scss">
   .ur-input{
