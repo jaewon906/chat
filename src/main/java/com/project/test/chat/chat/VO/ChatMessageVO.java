@@ -1,4 +1,4 @@
-package com.project.test.chat;
+package com.project.test.chat.chat.VO;
 
 public class ChatMessageVO {
     private String sender;

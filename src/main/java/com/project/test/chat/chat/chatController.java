@@ -1,5 +1,6 @@
-package com.project.test.chat;
+package com.project.test.chat.chat;
 
+import com.project.test.chat.chat.VO.ChatMessageVO;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;

@@ -9,7 +9,7 @@ const customApi = ()=>{
         // },
     })
     axiosInstance.interceptors.request.use((conf)=>{
-        conf.headers['Access-Control-Allow-Origin'] = 'http://localhost:9090'
+        // conf.headers['Access-Control-Allow-Origin'] = 'http://localhost:9090'
         return conf;
     })
     return axiosInstance
