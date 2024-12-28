@@ -24,7 +24,8 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
             http.authorizeHttpRequests((auth)->{
                 auth.requestMatchers("/").permitAll()
-                     .requestMatchers("/REST/v2/home").permitAll()
+                     .requestMatchers("/ws/**").hasAnyRole(CONSTS.ROLE_USER, CONSTS.ROLE_ADMIN) // WEBSOCKET
+                     .requestMatchers("/REST/v2/home").permitAll() // API
                      .requestMatchers("/REST/v2/login").permitAll()
                      .requestMatchers("/REST/v2/checkAuthentication").hasAnyRole(CONSTS.ROLE_USER, CONSTS.ROLE_ADMIN)
                     .requestMatchers("/REST/v2/chat").hasAnyRole(CONSTS.ROLE_USER, CONSTS.ROLE_ADMIN)
