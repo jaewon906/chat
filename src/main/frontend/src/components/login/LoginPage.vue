@@ -56,6 +56,7 @@ const forwardFn = {
 }
 .right__side{
   width:55%;
+  min-width: 550px;
   height:100%;
   display: flex;
   flex-direction: column;

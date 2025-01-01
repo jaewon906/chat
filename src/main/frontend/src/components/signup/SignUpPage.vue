@@ -41,6 +41,7 @@ const signUpFn = {
 }
 .right__side{
   width:55%;
+  min-width: 500px;
   height:100%;
   display: flex;
   flex-direction: column;
