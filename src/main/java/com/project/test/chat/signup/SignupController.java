@@ -1,6 +1,7 @@
 package com.project.test.chat.signup;
 
 import com.project.test.chat.CONST.CONSTS;
+import com.project.test.chat.exception.DuplicatedUserInfoException;
 import com.project.test.chat.signup.VO.SignupVO;
 import com.project.test.chat.signup.service.Impl.SignupServiceImpl;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class SignupController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody SignupVO signupVO) throws SQLException {
+    public ResponseEntity<String> signup(@RequestBody SignupVO signupVO) throws SQLException, DuplicatedUserInfoException {
         ResponseEntity<String> res = new ResponseEntity<>(HttpStatus.OK);
         signupService.signup(signupVO);
         return res;

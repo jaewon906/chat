@@ -21,12 +21,14 @@ const signUpFn = {
   signUp: (userData)=>{
     axios.post(url.REST + url.signup, userData.value)
         .then(res=>{
-          alert("화윈가입에 성공했습니다.")
+          alert("Welcome to join us!!")
           router.push({
             path: '/login'
           })
         })
-        .catch(()=>{alert("회원가입에 실패하였습니다.")})
+        .catch((e)=>{
+          alert(JSON.parse(e.request.response).message)
+        })
   }
 }
 </script>
