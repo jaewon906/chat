@@ -15,12 +15,10 @@
 
 <script setup>
 /* eslint-disable */
-  import UrInput from "@/components/common/UrInput.vue";
 import ChatBubble from "@/components/chat/ChatBubble.vue";
 import {onMounted, ref, nextTick, watch} from "vue";
 import SockJS from "sockjs-client"
 import {Stomp} from '@stomp/stompjs'
-import UrButton from "@/components/common/UrButton.vue";
   // init
   onMounted(()=>{
     openWebSocket();
@@ -51,7 +49,7 @@ import UrButton from "@/components/common/UrButton.vue";
   const chatData =ref({
     sender: '',
     content: '',
-    timestamp: '',
+    createDate: '',
   })
   const isContentNull =ref(true)
   const UUID = new Date() - (-0) // #TODO 임시
@@ -74,7 +72,7 @@ import UrButton from "@/components/common/UrButton.vue";
 
   function send() {
     chatData.value.sender = UUID
-    chatData.value.timestamp = convertToUTC9()
+    chatData.value.createDate = convertToUTC9()
     data.socket.send(data.url.PUB + data.url.send, {}, JSON.stringify(chatData.value))
     chatData.value.content = ''
   }

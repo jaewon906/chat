@@ -4,21 +4,39 @@
 
     </div>
     <div class="right__side">
-      <LoginFormComp>
-        <template #right-bottom-action>
-          <ur-button @click="sendData">sign in</ur-button>
-        </template>
-      </LoginFormComp>
+      <LoginFormComp @log-in="loginFn.login"
+                     @forward-signup-page="forwardFn.forwardSignUpPage"
+                     @forward-find-page="forwardFn.forwardFindPage"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
 import LoginFormComp from "@/components/login/LoginFormComp.vue";
-import UrButton from "@/components/common/UrButton.vue";
+import router from "@/routes";
+import axios from "@/js/axios";
 
-function sendData(){
+const url = {
+  REST: '/login',
+  login: '/login',
+};
 
+const loginFn = {
+  login: (userData) => {
+    axios.post(url.REST + url.login, userData.value)
+        .then()
+        .catch()
+  }
+};
+
+const forwardFn = {
+  forwardSignUpPage: ()=>{
+    router.push({
+      path:'/signup'
+    })
+  },
+  forwardFindPage: ()=>{}
 }
 </script>
 

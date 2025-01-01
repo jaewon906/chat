@@ -15,4 +15,9 @@ public class LoginController {
     public ResponseEntity<String> checkAuthentication(){
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/admin")
+    public ResponseEntity<String> test(){
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

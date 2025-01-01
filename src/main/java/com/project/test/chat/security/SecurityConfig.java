@@ -1,11 +1,14 @@
 package com.project.test.chat.security;
 
 import com.project.test.chat.CONST.CONSTS;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -24,17 +27,38 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
             http.authorizeHttpRequests((auth)->{
                 auth.requestMatchers("/").permitAll()
-                     .requestMatchers("/ws/**").hasAnyRole(CONSTS.ROLE_USER, CONSTS.ROLE_ADMIN) // WEBSOCKET
-                     .requestMatchers("/REST/v2/home").permitAll() // API
-                     .requestMatchers("/REST/v2/login").permitAll()
-                     .requestMatchers("/REST/v2/checkAuthentication").hasAnyRole(CONSTS.ROLE_USER, CONSTS.ROLE_ADMIN)
-                    .requestMatchers("/REST/v2/chat").hasAnyRole(CONSTS.ROLE_USER, CONSTS.ROLE_ADMIN)
-                    .requestMatchers("/REST/v2/main").hasAnyRole(CONSTS.ROLE_USER, CONSTS.ROLE_ADMIN);
-        });
+                    .requestMatchers("/ws/**").authenticated() // WEBSOCKET
+                    .requestMatchers("/REST/v2/home").permitAll() // API
+                    .requestMatchers("/REST/v2/login/**").permitAll()
+                    .requestMatchers("/REST/v2/signup/signup").permitAll()
+                    .requestMatchers("/REST/v2/checkAuthentication").authenticated()
+//                    .requestMatchers("/REST/v2/chat").authenticated()
+                    .requestMatchers("/REST/v2/admin").hasAuthority(CONSTS.ROLE_ADMIN)
+                    .anyRequest().authenticated();
+                }).exceptionHandling((ex)->{
+                      ex.authenticationEntryPoint(authenticationEntryPoint())
+                        .accessDeniedHandler(accessDeniedHandler());
+            });
 //          .formLogin(form->form.loginPage("/notLogin"));
 
         http.addFilterBefore(loginFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(corsFilter, LoginFilter.class);
         return http.build();
+    }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return (req, res, authException) -> {
+            System.out.println("authenticationEntryPoint");
+            res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        };
+    }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (req, res, accessDeniedException) -> {
+            System.out.println("accessDeniedHandler");
+            res.sendError(HttpServletResponse.SC_FORBIDDEN);
+        };
     }
 }

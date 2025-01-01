@@ -21,7 +21,8 @@ public class LoginFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws ServletException, IOException {
 
         //#TODO 인증 과정 로직 구현필요
-        List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList("ROLE_ADMIN", "ROLE_USER");
+//        List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList("ROLE_ADMIN", "ROLE_USER");
+        List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList( "ROLE_USER");
 
         // Authentication 객체 생성
         Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -29,7 +30,6 @@ public class LoginFilter extends OncePerRequestFilter {
 
         // SecurityContext에 인증 정보 설정
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         chain.doFilter(req, res);
     }
 }

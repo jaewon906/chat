@@ -32,6 +32,14 @@
     disabled:{
       type: Boolean,
       default: false
+    },
+    widthFree:{
+      type: Boolean,
+      default: false
+    },
+    main:{
+      type: Boolean,
+      default: false
     }
   })
   function click(){
@@ -41,12 +49,14 @@
 
   const buttonClass = computed(()=>{
     return {
-      'ur-button': true,
-      'ur-button-sm': props.small,
-      'ur-button-medium': props.medium,
-      'ur-button-large': props.large,
-      'ur-button-xlarge': props.xlarge,
-      'ur-button-disabled': props.disabled
+      'ur-button def': !props.main,
+      'ur-button main': props.main,
+      'small': props.small,
+      'medium': props.medium,
+      'large': props.large,
+      'xlarge': props.xlarge,
+      'widthFree': props.widthFree,
+      'disabled': props.disabled,
     }
   })
 
@@ -54,35 +64,49 @@
 
 <style scoped lang="scss">
 .ur-button{
-  margin: 0 0 0 20px;
+  //margin: 0 0 0 20px;
   width: 120px;
   height: 40px;
   border-radius: 5px;
   border :none;
-  transition: 0.1s background-color ease;
-  background-color: rgb(21,112,239);
-  color:white;
   font-weight: 400;
   font-size: 16px;
   cursor:pointer;
 }
-.ur-button-sm{
+.main{
+  transition: 0.1s background-color ease;
+  background-color: rgb(21,112,239);
+  color:white;
+}
+.def{
+  transition: 0.1s background-color ease;
+  background-color: rgb(255, 255, 255);
+  border: 1px solid black;
+  color: #000000;
+}
+.small{
   width:80px;
 }
-.ur-button-medium{
+.medium{
   width:160px;
 }
-.ur-button-large{
+.large{
   width:220px;
 }
-.ur-button-xlarge{
+.xlarge{
   width:300px;
 }
-.ur-button-disabled{
+.widthFree{
+  width:100%;
+}
+.disabled{
   background-color: #bdcdec;
   cursor:default;
 }
-.ur-button:hover{
+.main:hover{
   background-color: #bdcdec
+}
+.def:hover{
+  background-color: #dcdcdc
 }
 </style>
