@@ -26,10 +26,12 @@ public class LoginFilter extends OncePerRequestFilter {
 
         // Authentication 객체 생성
         Authentication authentication = new UsernamePasswordAuthenticationToken(
-                null, null, authorities);
+                "", "", authorities);
 
         // SecurityContext에 인증 정보 설정
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        System.out.println(SecurityContextHolder.getContext().getAuthentication().isAuthenticated());
+        System.out.println(SecurityContextHolder.getContext().getAuthentication().getAuthorities());
         chain.doFilter(req, res);
     }
 }

@@ -5,11 +5,13 @@ import com.project.test.chat.signup.VO.SignupVO;
 import com.project.test.chat.signup.service.Impl.SignupServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 
 @RestController
+@Transactional
 @RequestMapping(CONSTS.REST + "/signup")
 public class SignupController {
 

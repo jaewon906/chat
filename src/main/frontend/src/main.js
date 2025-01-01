@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './js/common-interceptor'
 import {useRouter} from "vue-router";
 import globalComponents from "@/js/global-components";
+import './assets/default.css'
 const app = createApp(App)
 
 globalComponents(app)

@@ -8,7 +8,7 @@
     </div>
     <div class="chat_input__wrapper">
       <ur-input v-model="chatData.content" @enter="send"/>
-      <ur-button @click="send" :disabled="isContentNull">send</ur-button>
+      <ur-button class="ml-10" main @click="send" :disabled="isContentNull">send</ur-button>
     </div>
   </div>
 </template>

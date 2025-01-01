@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.project.test.chat.mapper.signup.SignupMapper">
+    <insert id="insertUserInfo" parameterType="com.project.test.chat.signup.VO.SignupVO">
+        INSERT INTO TB_COM_USER
+        (
+          USER_ID
+        , PWD
+        , EMAIL
+        , CREATE_DATE
+        )
+        VALUES
+            (
+              #{signupVO.userId}
+            , #{signupVO.password}
+            , #{signupVO.email}
+            , TIMEZONE('Asia/Seoul', CURRENT_TIMESTAMP)
+            )
+    </insert>
+</mapper>

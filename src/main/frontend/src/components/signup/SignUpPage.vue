@@ -10,17 +10,23 @@
 <script setup>
 import SignUpFormComp from "@/components/signup/SignUpFormComp.vue";
 import axios from "@/js/axios";
+import router from "@/routes";
 
 const url={
   REST: '/signup',
-  signup: ''
+  signup: '/signup'
 }
 
 const signUpFn = {
   signUp: (userData)=>{
     axios.post(url.REST + url.signup, userData.value)
-        .then(res=>{})
-        .catch()
+        .then(res=>{
+          alert("화윈가입에 성공했습니다.")
+          router.push({
+            path: '/login'
+          })
+        })
+        .catch(()=>{alert("회원가입에 실패하였습니다.")})
   }
 }
 </script>

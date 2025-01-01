@@ -97,7 +97,7 @@ const typeValidation = () => {
     if (ref === 'userId' // ID 적합성 검증
         && !userData.value[ref].match('^[a-zA-Z0-9]*$')) {
       $ref[ref].value.hasError = true;
-      $ref[ref].value.errorMessage = 'This field must not contained spacial character';
+      $ref[ref].value.errorMessage = 'This field only contained alphabet and number';
       $ref[ref].value.focus();
       return false;
     }
