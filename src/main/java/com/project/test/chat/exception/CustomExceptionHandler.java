@@ -1,5 +1,6 @@
 package com.project.test.chat.exception;
 
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -12,12 +13,21 @@ import java.util.Map;
 public class CustomExceptionHandler {
 
     @ExceptionHandler(DuplicatedUserInfoException.class)
-    public ResponseEntity<Map<String, Object>> handleCustomException(DuplicatedUserInfoException ex) {
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("status", ex.getHttpStatus());
-        errorResponse.put("message", ex.getMessage());
-        errorResponse.put("timestamp", LocalDateTime.now());
+    public ResponseEntity<CustomExceptionBuilder> userAlreadyExistException(DuplicatedUserInfoException ex) {
+        return new ResponseEntity<>(makeExceptionBuilder(ex, ex.getHttpStatus()), ex.getHttpStatus());
+    }
 
-        return new ResponseEntity<>(errorResponse, ex.getHttpStatus());
+    @ExceptionHandler(LoginFailedException.class)
+    public ResponseEntity<CustomExceptionBuilder> loginFailedException(LoginFailedException ex) {
+        return new ResponseEntity<>(makeExceptionBuilder(ex, ex.getHttpStatus()), ex.getHttpStatus());
+    }
+
+
+    private <T extends Exception> CustomExceptionBuilder makeExceptionBuilder(T ex, HttpStatusCode code){
+                return CustomExceptionBuilder.builder()
+                                      .message(ex.getMessage())
+                                      .status(code)
+                                      .timestamp(LocalDateTime.now())
+                                      .build();
     }
 }
