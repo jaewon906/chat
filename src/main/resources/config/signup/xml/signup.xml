@@ -3,6 +3,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.project.test.chat.mapper.signup.SignupMapper">
+    <select id="checkValidation" parameterType="com.project.test.chat.signup.VO.SignupVO" resultType="com.project.test.chat.signup.VO.SignupVO">
+        SELECT USER_ID
+             , EMAIL
+        FROM TB_COM_USER
+        WHERE 1=1
+          AND USER_ID = #{signupVO.userId}
+    </select>
     <insert id="insertUserInfo" parameterType="com.project.test.chat.signup.VO.SignupVO">
         INSERT INTO TB_COM_USER
         (
