@@ -78,7 +78,7 @@ const validation = () => {
         || userData.value[ref] === undefined
         || userData.value[ref] === null) {
       $ref[ref].value.hasError = true;
-      $ref[ref].value.errorMessage = 'This field is required';
+      $ref[ref].value.errorMessage = ref === 'userId' ? 'Please fill your ID' : 'Please fill your password';
       $ref[ref].value.focus();
       return false;
     }

@@ -136,7 +136,8 @@ const typeValidation = () => {
 .login_form__wrapper{
   margin-top: -100px;
   width:65%;
-  height:400px;
+  height:50%;
+  min-height: 400px;
 }
 .login_form__header{
   width:100%;
@@ -147,7 +148,7 @@ const typeValidation = () => {
 .login_form__content{
   margin-top: 20px;
   width:100%;
-  height:55%;
+  height:45%;
 }
 
 .forgot_your__password{

@@ -7,7 +7,7 @@
            @input="onInput"
            @click="()=>{selected = true}"
            @focusout="()=>{selected = false; hasError = false;}"
-           :placeholder=" hasError ? errorMessage : placeholder"
+           :placeholder="placeholder"
            :type="type"
     />
     <div v-if="hasError" class="error_reason__field">
