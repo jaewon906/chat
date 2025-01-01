@@ -4,6 +4,7 @@ import com.project.test.chat.CONST.CONSTS;
 import com.project.test.chat.exception.LoginFailedException;
 import com.project.test.chat.login.VO.LoginVO;
 import com.project.test.chat.login.service.impl.LoginServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,8 +23,8 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginVO loginVO) throws LoginFailedException {
-        loginService.login(loginVO);
+    public ResponseEntity<String> login(HttpServletRequest req, @RequestBody LoginVO loginVO) throws LoginFailedException {
+        loginService.login(req, loginVO);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

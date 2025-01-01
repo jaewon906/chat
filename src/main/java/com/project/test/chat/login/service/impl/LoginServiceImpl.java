@@ -5,6 +5,7 @@ import com.project.test.chat.exception.LoginFailedException;
 import com.project.test.chat.login.VO.LoginVO;
 import com.project.test.chat.login.service.LoginService;
 import com.project.test.chat.mapper.login.LoginMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,22 +15,26 @@ import java.util.List;
 public class LoginServiceImpl implements LoginService {
 
     private final LoginMapper loginMapper;
+    private final TokenGeneration tokenGeneration;
 
-    LoginServiceImpl(LoginMapper loginMapper) {
+    LoginServiceImpl(LoginMapper loginMapper, TokenGeneration tokenGeneration) {
         this.loginMapper = loginMapper;
+        this.tokenGeneration = tokenGeneration;
     }
     @Override
-    public List<LoginVO> login(LoginVO loginVO) throws LoginFailedException {
+    public void login(HttpServletRequest req, LoginVO loginVO) throws LoginFailedException {
+        // 1. check user info
         List<LoginVO> userInfo = loginMapper.getUserInfo(loginVO);
         if(userInfo.isEmpty()) throw new LoginFailedException("Please check your ID or Password");
 
+        // 2. decrypt DB password and compare requested rawPassword
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         boolean isPasswordCorrect = encoder.matches(loginVO.getPassword(), userInfo.get(0).getPassword());
         if(!isPasswordCorrect) throw new LoginFailedException("Please check your ID or Password");
 
-        TokenGeneration.TokenGenerationBuilder tokenGenerationBuilder = TokenGeneration.builder();
-        tokenGenerationBuilder.build();
+        // 3. generate accessToken and refreshToken
+        tokenGeneration.generateAccessToken();
+        tokenGeneration.generateRefreshToken();
 
-        return List.of();
     }
 }
