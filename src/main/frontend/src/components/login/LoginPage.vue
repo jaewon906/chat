@@ -25,8 +25,8 @@ const url = {
 const loginFn = {
   login: (userData) => {
     axios.post(url.REST + url.login, userData.value)
-        .then()
-        .catch()
+        .then(res=>{})
+        .catch(e=>{alert(JSON.parse(e.request.response).message)})
   }
 };
 

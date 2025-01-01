@@ -8,5 +8,5 @@ import java.util.List;
 
 @Mapper
 public interface LoginMapper {
-    List<LoginVO> login(@Param("loginVO") LoginVO loginVO);
+    List<LoginVO> getUserInfo(@Param("loginVO") LoginVO loginVO);
 }
