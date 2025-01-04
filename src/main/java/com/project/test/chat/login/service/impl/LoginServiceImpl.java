@@ -5,13 +5,15 @@ import com.project.test.chat.exception.LoginFailedException;
 import com.project.test.chat.login.VO.LoginVO;
 import com.project.test.chat.login.service.LoginService;
 import com.project.test.chat.mapper.login.LoginMapper;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class LoginServiceImpl implements LoginService {
 
     private final LoginMapper loginMapper;
@@ -22,7 +24,7 @@ public class LoginServiceImpl implements LoginService {
         this.tokenGeneration = tokenGeneration;
     }
     @Override
-    public void login(HttpServletRequest req, LoginVO loginVO) throws LoginFailedException {
+    public void login(HttpServletResponse res, LoginVO loginVO) throws LoginFailedException {
         // 1. check user info
         List<LoginVO> userInfo = loginMapper.getUserInfo(loginVO);
         if(userInfo.isEmpty()) throw new LoginFailedException("Please check your ID or Password");
@@ -32,9 +34,11 @@ public class LoginServiceImpl implements LoginService {
         boolean isPasswordCorrect = encoder.matches(loginVO.getPassword(), userInfo.get(0).getPassword());
         if(!isPasswordCorrect) throw new LoginFailedException("Please check your ID or Password");
 
-        // 3. generate accessToken and refreshToken
-        tokenGeneration.generateAccessToken();
-        tokenGeneration.generateRefreshToken();
+        // 3. get user authorization
+        List<LoginVO> userAuth = loginMapper.getUserAuth(loginVO);
 
+        // 4. generate accessToken and refreshToken;
+        res.addCookie(tokenGeneration.generateAccessToken(userAuth.get(0)));
+        res.addCookie(tokenGeneration.generateRefreshToken(userAuth.get(0)));
     }
 }

@@ -4,11 +4,45 @@
 
 <mapper namespace="com.project.test.chat.mapper.login.LoginMapper">
     <select id="getUserInfo" parameterType="com.project.test.chat.login.VO.LoginVO" resultType="com.project.test.chat.login.VO.LoginVO">
-        SELECT USER_ID
-             , PWD AS PASSWORD
-             , EMAIL
-        FROM TB_COM_USER
+        SELECT USR.USER_ID /*getUserInfo*/
+             , USR.PWD AS PASSWORD
+             , USR.EMAIL
+        FROM TB_COM_USER USR
         WHERE 1=1
-          AND USER_ID = #{loginVO.userId}
+          AND USR.USER_ID = #{loginVO.userId}
+    </select>
+
+    <resultMap id="getUserAuthMap" type="com.project.test.chat.login.VO.LoginVO">
+        <result property="userId" column="USER_ID"/>
+        <result property="roleCd" column="ROLE_CD"/>
+        <result property="roleNm" column="ROLE_NM"/>
+    </resultMap>
+    <select id="getUserAuth" parameterType="com.project.test.chat.login.VO.LoginVO" resultMap="getUserAuthMap">
+        SELECT A.USER_ID /*getUserAuth*/
+             ,ARRAY_AGG(A.ROLE_CD) AS ROLE_CD
+             ,ARRAY_AGG(A.ROLE_NM) AS ROLE_NM
+        FROM (SELECT USR.USER_ID
+                   , ROLEUSER.ROLE_CD AS ROLE_CD
+                   , ROLE.ROLE_NM AS ROLE_NM
+              FROM TB_COM_USER USR
+                       INNER JOIN TB_COM_ROLE_USER ROLEUSER
+                                  ON USR.USER_ID =ROLEUSER.USER_ID
+                       INNER JOIN TB_COM_ROLE ROLE
+                                  ON ROLE.ROLE_CD =ROLEUSER.ROLE_CD
+              WHERE 1=1
+                AND USR.USER_ID = #{loginVO.userId}
+              UNION ALL
+              SELECT #{loginVO.userId} AS USER_ID
+                   , 'USER' AS ROLE_CD
+                   , '일반유저' AS ROLE_NM
+              ) A
+        GROUP BY A.USER_ID
+    </select>
+    <select id="test" resultType="java.lang.String">
+        select array_agg(user_id) as a
+             ,email
+        from tb_com_user
+        group by email;
+
     </select>
 </mapper>

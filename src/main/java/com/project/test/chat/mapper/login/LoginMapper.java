@@ -9,4 +9,6 @@ import java.util.List;
 @Mapper
 public interface LoginMapper {
     List<LoginVO> getUserInfo(@Param("loginVO") LoginVO loginVO);
+    List<LoginVO> getUserAuth(@Param("loginVO") LoginVO loginVO);
+    List<List<String>> test();
 }

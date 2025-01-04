@@ -7,6 +7,7 @@ router.beforeEach((to, from, next) => {
         router.push({
             path:'/error'
         })
+        return;
     }
 
     // 2. loginPage, homePage를 제외한 path는 auth check를 진행.

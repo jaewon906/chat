@@ -10,6 +10,8 @@ const customApi = ()=>{
     })
     axiosInstance.interceptors.request.use((conf)=>{
         // conf.headers['Access-Control-Allow-Origin'] = 'http://localhost:9090'
+        // conf.headers['Access-Control-Allow-Credentials'] = true
+        conf.withCredentials = true // 설정을 해줘야 cookie가 브라우저에 등록됨
         return conf;
     })
     return axiosInstance

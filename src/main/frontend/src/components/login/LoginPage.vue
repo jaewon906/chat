@@ -25,7 +25,7 @@ const url = {
 const loginFn = {
   login: (userData) => {
     axios.post(url.REST + url.login, userData.value)
-        .then(res=>{})
+        .then(res=>{forwardFn.forwardMainPage()})
         .catch(e=>{alert(JSON.parse(e.request.response).message)})
   }
 };
@@ -34,6 +34,11 @@ const forwardFn = {
   forwardSignUpPage: ()=>{
     router.push({
       path:'/signup'
+    })
+  },
+  forwardMainPage: ()=>{
+    router.push({
+      path:'/main'
     })
   },
   forwardFindPage: ()=>{}
