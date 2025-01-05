@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,6 +24,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.security.Key;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -34,8 +36,13 @@ public class LoginFilter extends OncePerRequestFilter {
 
     @Value("${signature.refresh-token.key}")
     private String REFRESH_TOKEN_KEY;
-    private final LoginMapper loginMapper;
 
+    @Value("${access-token-name}")
+    private String ACCESS_TOKEN_NAME;
+
+    @Value("${refresh-token-name}")
+    private String REFRESH_TOKEN_NAME;
+    private final LoginMapper loginMapper;
     private final TokenGeneration tokenGeneration;
 
     LoginFilter(LoginMapper loginMapper, TokenGeneration tokenGeneration) {
@@ -51,36 +58,35 @@ public class LoginFilter extends OncePerRequestFilter {
         String refreshToken = "";
         if(cookies != null) {
             for (Cookie cookie : cookies) {
-                System.out.println("cookie.getName() : "+cookie.getName());
-                if (cookie.getName().equals("ac")) {
+
+                if (cookie.getName().equals(ACCESS_TOKEN_NAME)) {
                     accessToken = cookie.getValue();
                 }
-                if (cookie.getName().equals("rt")) {
+                if (cookie.getName().equals(REFRESH_TOKEN_NAME)) {
                     refreshToken = cookie.getValue();
                 }
             }
         }
 
-        //#TODO 인증 과정 로직 구현필요
-        List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList("ROLE_ADMIN", "ROLE_USER");
-
-        // Authentication 객체 생성
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                "", "", authorities);
-
         //2. accessToken 검증. 성공 시 인증 객체 생성
-        if(accessTokenValidation(accessToken)) { // accessToken 검증 성공 시 인증객체 생성
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        String[] role = accessTokenValidation(accessToken);
+        if(role != null) { // accessToken 검증 성공 시 인증객체 생성
+            SecurityContextHolder.getContext().setAuthentication(setAuthentication(role));
             chain.doFilter(req, res);
             return;
         }
         //3. refreshToken 검증. 성공 시 accessToken 생성 후 재검증??
-        if(refreshTokenValidation(refreshToken)) { // refreshToken 검증 성공 시 로직 재실행
+        String issuer = refreshTokenValidation(refreshToken);
+        if(issuer != null) { // refreshToken 검증 성공 시 로직 재실행
             LoginVO loginVO = new LoginVO();
-            loginMapper.getUserAuth(loginVO);
+            loginVO.setUserId(issuer);
+            List<LoginVO> userAuth = loginMapper.getUserAuth(loginVO);
+            loginVO.setRoleCd(userAuth.get(0).getRoleCd());
+            loginVO.setRoleNm(userAuth.get(0).getRoleNm());
             accessToken = tokenGeneration.generateAccessToken(loginVO).getValue();
-            if (accessTokenValidation(accessToken)) {
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+            role = accessTokenValidation(accessToken);
+            if (role != null) {
+                SecurityContextHolder.getContext().setAuthentication(setAuthentication(role));
                 res.addCookie(tokenGeneration.generateAccessToken(loginVO));
 
             }
@@ -89,7 +95,7 @@ public class LoginFilter extends OncePerRequestFilter {
         chain.doFilter(req, res);
     }
 
-    private boolean accessTokenValidation(String token){
+    private String[] accessTokenValidation(String token){
         try{
             if(token == null || token.isEmpty()) throw new TokenValidationFailedException("token is empty");
             Key key = new SecretKeySpec(ACCESS_TOKEN_KEY.getBytes(), SignatureAlgorithm.HS256.getJcaName());
@@ -99,7 +105,7 @@ public class LoginFilter extends OncePerRequestFilter {
                     .parseClaimsJws(token);
             log.info("Login Info::::::::::::::");
             log.info(claims.toString());
-            return true;
+            return convertToRoleList(claims.getBody().get("ROLE").toString());
         } catch (SecurityException | MalformedJwtException e) {
             log.info("Invalid Access Token", e);
         } catch (ExpiredJwtException e) {
@@ -111,17 +117,17 @@ public class LoginFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             log.info("Exception", e);
         }
-        return false;
+        return null;
     }
-    private boolean refreshTokenValidation(String token){
+    private String refreshTokenValidation(String token){
         try{
             if(token == null || token.isEmpty()) throw new TokenValidationFailedException("token is empty");
             Key key = new SecretKeySpec(REFRESH_TOKEN_KEY.getBytes(), SignatureAlgorithm.HS256.getJcaName());
-            Jwts.parserBuilder()
+            Jws<Claims> claimsJws = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token);
-            return true;
+            return claimsJws.getBody().getIssuer();
         } catch (SecurityException | MalformedJwtException e) {
             log.info("Invalid Refresh Token", e);
         } catch (ExpiredJwtException e) {
@@ -133,6 +139,25 @@ public class LoginFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             log.info("Exception", e);
         }
-        return false;
+        return null;
+    }
+    private Authentication setAuthentication(String[] roles) {
+        List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList(roles);
+        return new UsernamePasswordAuthenticationToken("", "", authorities);
+    }
+
+    private String[] convertToRoleList(String roleList){
+        String trim = roleList.substring(1, roleList.length()-1);
+        String[] roles = trim.split(",");
+        List<String> roleCd = new ArrayList<>();
+        List<String> roleNm = new ArrayList<>();
+
+        for (String role : roles) {
+            roleCd.add(role.split("=")[0].trim());
+//            roleCd.add("ROLE_"+role.split("=")[0].trim());
+            roleNm.add(role.split("=")[1]);
+        }
+
+        return roleCd.toArray(String[]::new);
     }
 }

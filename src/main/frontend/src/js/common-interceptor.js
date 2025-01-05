@@ -27,6 +27,7 @@ router.beforeEach((to, from, next) => {
             statusBranchProcessing(to, from, status)
         })
 
+    axios.get('/admin').then().catch()
 })
 
 function statusBranchProcessing(to, from, status){ // status에 따른 분기처리

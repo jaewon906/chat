@@ -20,6 +20,12 @@ public class TokenGeneration {
     @Value("${signature.refresh-token.key}")
     private String REFRESH_TOKEN_KEY;
 
+    @Value("${access-token-name}")
+    private String ACCESS_TOKEN_NAME;
+
+    @Value("${refresh-token-name}")
+    private String REFRESH_TOKEN_NAME;
+
     public Cookie generateAccessToken(LoginVO loginVO) {
 
         //1. set Header
@@ -46,14 +52,14 @@ public class TokenGeneration {
         //5. build token
         String jwt = Jwts.builder()
                 .setHeader(header)
-                .setClaims(claim)
+                .claim("ROLE", claim)
                 .setIssuer(loginVO.getUserId())
                 .setIssuedAt(now)
                 .setExpiration(minutes_30)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
-        Cookie cookie = new Cookie("ac", jwt);
+        Cookie cookie = new Cookie(ACCESS_TOKEN_NAME, jwt);
         cookie.setPath("/");
         cookie.setDomain("localhost");
 //        cookie.setAttribute("SameSite", "None");
@@ -87,7 +93,7 @@ public class TokenGeneration {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
-        Cookie cookie = new Cookie("rt", jwt);
+        Cookie cookie = new Cookie(REFRESH_TOKEN_NAME, jwt);
         cookie.setPath("/");
         cookie.setMaxAge(3600 * 24);
         cookie.setHttpOnly(true);
