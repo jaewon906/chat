@@ -35,7 +35,6 @@ public class SecurityConfig {
                 .requestMatchers("/REST/v2/login/**").permitAll()
                 .requestMatchers("/REST/v2/signup/**").permitAll()
                 .requestMatchers("/REST/v2/auth/checkAuthentication").authenticated()
-//                .requestMatchers("/REST/v2/chat").authenticated()
                 .requestMatchers("/REST/v2/admin/**").hasAuthority(CONSTS.ROLE_ADMIN)
                 .anyRequest().authenticated();
 //            }).exceptionHandling((ex)->{

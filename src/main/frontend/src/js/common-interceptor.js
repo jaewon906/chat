@@ -9,7 +9,6 @@ router.beforeEach((to, from, next) => {
         })
         return;
     }
-
     // 2. loginPage, homePage를 제외한 path는 auth check를 진행.
     const permitAllURL = ['/', '/login', '/signup', '/find', '/error']; // #TODO 하드코딩 부분을 DB에서 permitAll된 URL 리스트로 변환 필요
     for (const URL of permitAllURL) {
@@ -19,15 +18,26 @@ router.beforeEach((to, from, next) => {
         }
     }
 
-    // 3.지정한 URL이 아닌 곳에 접근 시 권한 체크.
-    axios.get('/auth/checkAuthentication')
-        .then(res=>next())
-        .catch(err=>{
-            const status = err.status
-            statusBranchProcessing(to, from, status)
-        })
+    // 3.지정한 URL이 아닌 곳에 접근 시 && 관리자 메뉴 제외 하고 권한 체크.
+    if (!to.path.match("^\\/admin(?:[a-zA-Z0-9!?\\/=_-]+)*$")) {
+        axios.get('/auth/checkAuthentication')
+            .then(res=>next())
+            .catch(err=>{
+                const status = err.status
+                statusBranchProcessing(to, from, status)
+            })
+    }
 
-    axios.get('/admin').then().catch()
+    // 4. 관리자 URL 접근 시 ADMIN 여부 체크
+    if (to.path.match("^\\/admin(?:[a-zA-Z0-9!?\\/=_-]+)*$")) {
+        axios.get('/admin/checkAdmin')
+            .then(res=>next())
+            .catch((err)=>{
+                   const status = err.status
+                   statusBranchProcessing(to, from, status)
+                }
+            );
+    }
 })
 
 function statusBranchProcessing(to, from, status){ // status에 따른 분기처리
@@ -41,9 +51,9 @@ function statusBranchProcessing(to, from, status){ // status에 따른 분기처
     }
     if (status === 403) {
         alert("접근 권한이 없습니다.");
-        router.push({
-            path: from.path
-        })
+        // router.push({
+        //     path: from.path
+        // })
     }
 }
 

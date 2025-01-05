@@ -5,6 +5,7 @@ const LoginPage = () => import("@/components/login/LoginPage.vue");
 const ChatPage = () => import("@/components/chat/ChatPage.vue");
 const MainPage = () => import("@/components/main/MainPage.vue");
 const SignUpPage = () => import("@/components/signup/SignUpPage.vue");
+const AdminPage = () => import("@/components/admin/AdminPage.vue");
 const ErrorPage = () => import("@/components/error/ErrorPage.vue");
 
 const routes = [
@@ -13,6 +14,7 @@ const routes = [
     {path: '/main', name: 'main', component: MainPage},
     {path: '/chat', name: 'chat', component: ChatPage},
     {path: '/signup', name: 'signUp', component: SignUpPage},
+    {path: '/admin', name: 'admin', component: AdminPage},
     {path: '/error', name: 'error', component: ErrorPage},
 ];
 
