@@ -13,7 +13,7 @@
             update_date timestamp,
             primary key(user_id)
         )
-    </select>
+    </insert>
     <insert id="createTbComRole">
         create table TB_COM_ROLE
         (
