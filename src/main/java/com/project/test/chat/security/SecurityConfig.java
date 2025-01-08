@@ -37,9 +37,9 @@ public class SecurityConfig {
                 .requestMatchers("/REST/v2/auth/checkAuthentication").authenticated()
                 .requestMatchers("/REST/v2/admin/**").hasAuthority(CONSTS.ROLE_ADMIN)
                 .anyRequest().authenticated();
-//            }).exceptionHandling((ex)->{
-//                  ex.authenticationEntryPoint(authenticationEntryPoint())
-//                    .accessDeniedHandler(accessDeniedHandler());
+            }).exceptionHandling((ex)->{
+                  ex.authenticationEntryPoint(authenticationEntryPoint())
+                    .accessDeniedHandler(accessDeniedHandler());
         });
 //      .formLogin(form->form.loginPage("/notLogin"));
 
@@ -51,14 +51,20 @@ public class SecurityConfig {
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return (req, res, authException) -> {
+            System.out.println(res.getStatus());
             System.out.println("authenticationEntryPoint");
-            res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            if(res.getStatus() == HttpServletResponse.SC_FORBIDDEN){ //#TODO 왜 SecurityContextHolder엔 인증된 객체가 존재하는데 이 handler가 실행될까?
+                res.sendError(HttpServletResponse.SC_FORBIDDEN);
+            }
+            else
+                res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         };
     }
 
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return (req, res, accessDeniedException) -> {
+            System.out.println(res.getStatus());
             System.out.println("accessDeniedHandler");
             res.sendError(HttpServletResponse.SC_FORBIDDEN);
         };
